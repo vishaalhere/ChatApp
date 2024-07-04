@@ -1,0 +1,29 @@
+/* App.css */
+.chat-window {
+  border: 1px solid #ddd;
+  padding: 20px;
+  height: 300px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+input {
+  padding: 10px;
+  margin-right: 10px;
+  width: 80%;
+}
+
+button {
+  padding: 10px;
+}
+
+/* App.css */
+@media (max-width: 600px) {
+  .chat-window {
+    height: 200px;
+  }
+
+  input {
+    width: 70%;
+  }
+}
