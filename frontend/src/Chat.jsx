@@ -45,7 +45,7 @@ const Chat = ({
 
       {/* Chat messages */}
       <div className="flex-grow flex flex-col overflow-y-auto p-4">
-        {messages.map((msg, index) => (
+        {messages?.length > 0 && messages.map((msg, index) => (
           <div
             key={index}
             className={`flex mb-2 ${

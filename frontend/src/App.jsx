@@ -21,6 +21,8 @@ function App() {
     const user = getCurrentUser();
     if (user) {
       setIsLoggedIn(true);
+      const storedMessages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+      setMessages(storedMessages);
     }
   }, []);
 
@@ -36,10 +38,7 @@ function App() {
 
       socketRef.current.onmessage = (event) => {
         const receivedMessage = event.data;
-        setMessages((prev) => [
-          ...prev,
-          { text: receivedMessage, type: "received" },
-        ]);
+        saveMessage({ text: receivedMessage, type: "received" });
         setIsTyping(false); // Hide typing indicator when message is received
       };
 
@@ -58,6 +57,14 @@ function App() {
       }
     };
   }, [isLoggedIn]);
+
+  const saveMessage = (message) => {
+    // Save message to local storage
+    const storedMessages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+    const updatedMessages = [...storedMessages, message];
+    localStorage.setItem("chatMessages", JSON.stringify(updatedMessages));
+    setMessages(updatedMessages);
+  };
 
   const handleLogin = async () => {
     try {
@@ -90,11 +97,13 @@ function App() {
     if (socketRef.current) {
       socketRef.current.close();
     }
+    localStorage.removeItem("chatMessages"); // Clear messages from local storage on logout
   };
 
   const sendMessage = () => {
     if (socketRef.current && input.trim() !== "") {
-      setMessages((prev) => [...prev, { text: input, type: "sent" }]);
+      const message = { text: input, type: "sent" };
+      saveMessage(message);
       setIsTyping(true); // Show typing indicator when sending a message
       socketRef.current.send(input);
       setInput("");
