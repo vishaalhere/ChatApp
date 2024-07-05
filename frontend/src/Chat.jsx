@@ -9,7 +9,7 @@ function Chat() {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    socketRef.current = new WebSocket('ws://localhost:8080');
+    socketRef.current = new WebSocket(`ws://${import.meta.env.VITE_SERVER_IP}:8080`);
 
     socketRef.current.onmessage = (event) => {
       setMessages(prevMessages => {

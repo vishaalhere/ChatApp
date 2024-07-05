@@ -21,7 +21,7 @@ function App() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      socketRef.current = new WebSocket('ws://localhost:8080');
+      socketRef.current = new WebSocket(`ws://${import.meta.env.VITE_SERVER_IP}:8080`);
 
       socketRef.current.onopen = () => {
         console.log('WebSocket connection established');
