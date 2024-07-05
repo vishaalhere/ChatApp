@@ -12,6 +12,7 @@ function App() {
   const [isRegistering, setIsRegistering] = useState(false); // Add state for register mode
   const [error, setError] = useState('');
   const [isTyping, setIsTyping] = useState(false); // Add state for typing indicator
+  const [username, setUsername] = useState(''); // Add state for username
   const socketRef = useRef(null);
 
   useEffect(() => {
@@ -97,6 +98,14 @@ function App() {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
         <div className="w-full max-w-xs">
+        <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full px-3 py-2 mb-2 border border-gray-300 rounded"
+          />
           <input
             type="email"
             name="email"
