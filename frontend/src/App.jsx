@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { login, logout, getCurrentUser, register } from "./authService";
 import "./App.css"; // Import a CSS file for additional styling if needed
+import LoginRegister from "./LoginRegister";
+import Chat from "./Chat";
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -101,113 +103,33 @@ function App() {
 
   if (!isLoggedIn) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-        <div className="w-full max-w-xs">
-          {isRegistering && (
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3 py-2 mb-2 border border-gray-300 rounded"
-            />
-          )}
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 mb-2 border border-gray-300 rounded"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 mb-2 border border-gray-300 rounded"
-          />
-
-          {isRegistering && (
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-3 py-2 mb-2 border border-gray-300 rounded"
-            />
-          )}
-          {isRegistering ? (
-            <button
-              onClick={handleRegister}
-              className="w-full px-3 py-2 text-white bg-blue-500 rounded"
-            >
-              Register
-            </button>
-          ) : (
-            <button
-              onClick={handleLogin}
-              className="w-full px-3 py-2 text-white bg-blue-500 rounded"
-            >
-              Login
-            </button>
-          )}
-          <button
-            onClick={() => setIsRegistering(!isRegistering)}
-            className="w-full px-3 py-2 mt-2 text-blue-500"
-          >
-            {isRegistering
-              ? "Already have an account? Login"
-              : "Need an account? Register"}
-          </button>
-          {error && <p className="mt-2 text-red-500">{error}</p>}
-        </div>
-      </div>
+      <LoginRegister
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        confirmPassword={confirmPassword}
+        setConfirmPassword={setConfirmPassword}
+        username={username}
+        setUsername={setUsername}
+        isRegistering={isRegistering}
+        setIsRegistering={setIsRegistering}
+        handleLogin={handleLogin}
+        handleRegister={handleRegister}
+        error={error}
+      />
     );
   }
 
   return (
-    <div className="flex flex-col h-screen p-4 bg-gray-100">
-      <div className="flex-grow overflow-y-auto">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`p-2 mb-2 rounded shadow ${
-              msg.type === "sent"
-                ? "bg-blue-500 text-white self-end"
-                : "bg-white text-black"
-            }`}
-          >
-            {msg.text}
-          </div>
-        ))}
-        {isTyping && (
-          <div className="p-2 mb-2 text-gray-500">Server is typing...</div>
-        )}
-      </div>
-      <div className="flex mt-2">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-          className="flex-grow p-2 border border-gray-300 rounded"
-        />
-        <button
-          onClick={sendMessage}
-          className="px-4 py-2 ml-2 text-white bg-blue-500 rounded"
-        >
-          Send
-        </button>
-      </div>
-      <button
-        onClick={handleLogout}
-        className="px-4 py-2 mt-2 text-white bg-red-500 rounded"
-      >
-        Logout
-      </button>
-    </div>
+    <Chat
+      messages={messages}
+      input={input}
+      setInput={setInput}
+      sendMessage={sendMessage}
+      isTyping={isTyping}
+      handleLogout={handleLogout}
+    />
   );
 }
 
