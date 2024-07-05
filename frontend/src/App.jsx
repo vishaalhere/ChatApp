@@ -3,6 +3,7 @@ import { login, logout, getCurrentUser, register } from "./authService";
 import "./App.css"; // Import a CSS file for additional styling if needed
 import LoginRegister from "./LoginRegister";
 import Chat from "./Chat";
+import { delay } from "./helper";
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -80,8 +81,10 @@ function App() {
         console.log("WebSocket connection established");
       };
 
-      socketRef.current.onmessage = (event) => {
+      socketRef.current.onmessage = async (event) => {
         const receivedMessage = event.data;
+        setIsTyping(true)
+        await delay(400)
         saveMessage({ text: receivedMessage, type: "received" });
         setIsTyping(false);
       };
@@ -118,7 +121,7 @@ function App() {
           };
         });
       }
-
+    
     const storedMessages =
       JSON.parse(localStorage.getItem(tabsLocal[selectedTabLocal].name)) || [];
     const updatedMessages = [...storedMessages, message];
