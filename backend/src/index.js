@@ -13,11 +13,7 @@ module.exports = {
       ws.on("message", (message) => {
         const messageString = message.toString();
         console.log("Received:", messageString);
-
-        // Simulate a delay before sending the message back
-        setTimeout(() => {
-          ws.send(messageString);
-        }, 1000); // 1-second delay
+        ws.send(messageString);
       });
 
       ws.on("close", () => {
