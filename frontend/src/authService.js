@@ -21,3 +21,16 @@ export const logout = () => {
 export const getCurrentUser = () => {
   return JSON.parse(localStorage.getItem('user'));
 };
+
+
+export async function register(email, password) {
+  try {
+    const response = await axios.post(`${API_URL}/auth/local/register`, {
+      email,
+      password,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error('Registration failed. Please try again.');
+  }
+}

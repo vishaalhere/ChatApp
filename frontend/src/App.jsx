@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { login, logout, getCurrentUser } from './authService';
+import { login, logout, getCurrentUser, register } from './authService';
 import './App.css'; // Import a CSS file for additional styling if needed
 
 function App() {
@@ -7,7 +7,9 @@ function App() {
   const [input, setInput] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState(''); // Add state for confirm password
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false); // Add state for register mode
   const [error, setError] = useState('');
   const [isTyping, setIsTyping] = useState(false); // Add state for typing indicator
   const socketRef = useRef(null);
@@ -59,6 +61,20 @@ function App() {
     }
   };
 
+  const handleRegister = async () => {
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    try {
+      await register(email, password);
+      setIsRegistering(false);
+      setError('');
+    } catch (err) {
+      setError('Failed to register. Please try again.');
+    }
+  };
+
   const handleLogout = () => {
     logout();
     setIsLoggedIn(false);
@@ -83,6 +99,7 @@ function App() {
         <div className="w-full max-w-xs">
           <input
             type="email"
+            name="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -95,11 +112,35 @@ function App() {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full px-3 py-2 mb-2 border border-gray-300 rounded"
           />
+          {isRegistering && (
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full px-3 py-2 mb-2 border border-gray-300 rounded"
+            />
+          )}
+          {isRegistering ? (
+            <button
+              onClick={handleRegister}
+              className="w-full px-3 py-2 text-white bg-blue-500 rounded"
+            >
+              Register
+            </button>
+          ) : (
+            <button
+              onClick={handleLogin}
+              className="w-full px-3 py-2 text-white bg-blue-500 rounded"
+            >
+              Login
+            </button>
+          )}
           <button
-            onClick={handleLogin}
-            className="w-full px-3 py-2 text-white bg-blue-500 rounded"
+            onClick={() => setIsRegistering(!isRegistering)}
+            className="w-full px-3 py-2 mt-2 text-blue-500"
           >
-            Login
+            {isRegistering ? 'Already have an account? Login' : 'Need an account? Register'}
           </button>
           {error && <p className="mt-2 text-red-500">{error}</p>}
         </div>
