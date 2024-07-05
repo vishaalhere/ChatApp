@@ -160,7 +160,6 @@ function App() {
     if (socketRef.current) {
       socketRef.current.close();
     }
-    localStorage.removeItem("usersCount"); // Clear messages from local storage on logout
     setTabs([]);
   };
 
