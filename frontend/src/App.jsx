@@ -16,15 +16,59 @@ function App() {
   const [isTyping, setIsTyping] = useState(false); // Add state for typing indicator
   const [username, setUsername] = useState(""); // Add state for username
   const socketRef = useRef(null);
+  const [usersCount, setUsersCount] = useState(0);
+  const initialTabs = [
+    { id: 0, name: "User0", profilePic: "https://via.placeholder.com/40" },
+  ];
+
+  const [tabs, setTabs] = useState([]);
+  const [selectedTab, setSelectedTab] = useState(0);
 
   useEffect(() => {
     const user = getCurrentUser();
+
     if (user) {
+
+      if (!localStorage.getItem("usersCount")) {
+        localStorage.setItem("usersCount", 1);
+      } else {
+        let usersCountLocal = localStorage.getItem("usersCount");
+        setUsersCount(+usersCountLocal);
+      }
+
+
+      if (!localStorage.getItem("selectedTab")) {
+        setSelectedTab(0);
+        localStorage.setItem("selectedTab", 0);
+      } else {
+        let selectedTabLocal = localStorage.getItem("selectedTab");
+        setSelectedTab(+selectedTabLocal);
+      }
+
+
+      let usersCountLocal = localStorage.getItem("usersCount");
+      let tabsLocal = [];
+      if (!usersCountLocal) {
+        tabsLocal = [...initialTabs];
+        setTabs(initialTabs);
+      } else {
+        tabsLocal = Array.from({ length: usersCountLocal }, (v, i) => {
+          return {
+            id: i,
+            name: `User${i}`,
+            profilePic: "https://via.placeholder.com/40",
+          };
+        });
+
+        setTabs(tabsLocal);
+      }
       setIsLoggedIn(true);
-      const storedMessages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+      const storedMessages =
+        JSON.parse(localStorage.getItem(tabsLocal[selectedTab].name)) || [];
       setMessages(storedMessages);
     }
-  }, []);
+
+  }, [isLoggedIn]);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -39,7 +83,7 @@ function App() {
       socketRef.current.onmessage = (event) => {
         const receivedMessage = event.data;
         saveMessage({ text: receivedMessage, type: "received" });
-        setIsTyping(false); // Hide typing indicator when message is received
+        setIsTyping(false);
       };
 
       socketRef.current.onerror = (error) => {
@@ -59,10 +103,29 @@ function App() {
   }, [isLoggedIn]);
 
   const saveMessage = (message) => {
-    // Save message to local storage
-    const storedMessages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+    const selectedTabLocal = localStorage.getItem("selectedTab");
+    let usersCountLocal = localStorage.getItem("usersCount");
+
+    let tabsLocal = [];
+      if (!usersCountLocal) {
+        tabsLocal = [...initialTabs];
+      } else {
+        tabsLocal = Array.from({ length: usersCountLocal }, (v, i) => {
+          return {
+            id: i,
+            name: `User${i}`,
+            profilePic: "https://via.placeholder.com/40",
+          };
+        });
+      }
+
+    const storedMessages =
+      JSON.parse(localStorage.getItem(tabsLocal[selectedTabLocal].name)) || [];
     const updatedMessages = [...storedMessages, message];
-    localStorage.setItem("chatMessages", JSON.stringify(updatedMessages));
+    localStorage.setItem(
+      tabsLocal[selectedTabLocal].name,
+      JSON.stringify(updatedMessages)
+    );
     setMessages(updatedMessages);
   };
 
@@ -97,7 +160,8 @@ function App() {
     if (socketRef.current) {
       socketRef.current.close();
     }
-    localStorage.removeItem("chatMessages"); // Clear messages from local storage on logout
+    localStorage.removeItem("usersCount"); // Clear messages from local storage on logout
+    setTabs([]);
   };
 
   const sendMessage = () => {
@@ -138,6 +202,13 @@ function App() {
       sendMessage={sendMessage}
       isTyping={isTyping}
       handleLogout={handleLogout}
+      setMessages={setMessages}
+      tabs={tabs}
+      setTabs={setTabs}
+      selectedTab={selectedTab}
+      setSelectedTab={setSelectedTab}
+      usersCount={usersCount}
+      setUsersCount={setUsersCount}
     />
   );
 }
