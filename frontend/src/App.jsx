@@ -35,13 +35,13 @@ function App() {
         let usersCountLocal = localStorage.getItem("usersCount");
         setUsersCount(+usersCountLocal);
       }
-
+      let selectedTabLocal = 0;
 
       if (!localStorage.getItem("selectedTab")) {
         setSelectedTab(0);
         localStorage.setItem("selectedTab", 0);
       } else {
-        let selectedTabLocal = localStorage.getItem("selectedTab");
+        selectedTabLocal = localStorage.getItem("selectedTab");
         setSelectedTab(+selectedTabLocal);
       }
 
@@ -64,7 +64,7 @@ function App() {
       }
       setIsLoggedIn(true);
       const storedMessages =
-        JSON.parse(localStorage.getItem(tabsLocal[selectedTab].name)) || [];
+        JSON.parse(localStorage.getItem(tabsLocal[selectedTabLocal].name)) || [];
       setMessages(storedMessages);
     }
 
